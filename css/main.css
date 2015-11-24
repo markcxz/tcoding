@@ -68,19 +68,19 @@ div[class*="span"] {
 	Typography Style
 --------------------------------------------------------------------------*/
 body {
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Arial,"Open Sans",SimSun,sans-serif;
   font-size: 14px;
   line-height: 20px;
   color: #535b60;
 }
 h1 {
   color: #53555c;
-  font-family: 'Open Sans', sans-serif;
+  font-family:  "Microsoft YaHei",Arial,"Open Sans",SimSun,sans-serif;
   font-weight: 800;
 }
 h2 {
   color: #53555c;
-  font-family: 'Open Sans', sans-serif;
+  font-family:  "Microsoft YaHei",Arial,"Open Sans",SimSun,sans-serif;
   font-size: 2em;
   border-bottom: 2px solid #53555c;
   line-height: 1.5em;
@@ -88,12 +88,12 @@ h2 {
   padding-left: 10px;
 }
 h3 {
-  font-family: 'Open Sans', sans-serif;
+  font-family:  Arial,"Open Sans",SimSun,sans-serif;
   color: #53555c;
   font-size: 1.5em;
 }
 h4 {
-  font-family: 'Open Sans', sans-serif;
+  font-family:  Arial,"Open Sans",SimSun,sans-serif;
   color: #53555c;
   margin-bottom: 10px;
 }
@@ -1417,19 +1417,19 @@ span.color-red {
 --------------------------------------------------------------------------*/
 .portfolio-item {
   position: relative;
-  background: #000;
-  margin-bottom: 20px;width: 160px;
-  border: 8px solid #000;
+  background: #fff;
+  margin-bottom: 20px;
+  border: 8px solid #fff;
   -webkit-border-radius: 5px;
   -webkit-background-clip: padding-box;
   -moz-border-radius: 5px;
   -moz-background-clip: padding;
   border-radius: 5px;
   background-clip: padding-box;
-  -webkit-box-shadow: inset 0 1px #000,0 0 8px #c8cfe6;
-  -moz-box-shadow: inset 0 1px #000,0 0 8px #c8cfe6;
-  box-shadow: inset 0 1px #000,0 0 8px #c8cfe6;
-  color: inset 0 1px #000,0 0 8px #c8cfe6;
+  -webkit-box-shadow: inset 0 1px #fff,0 0 8px #c8cfe6;
+  -moz-box-shadow: inset 0 1px #fff,0 0 8px #c8cfe6;
+  box-shadow: inset 0 1px #fff,0 0 8px #c8cfe6;
+  color: inset 0 1px #fff,0 0 8px #c8cfe6;
   -webkit-transition: all .5s ease;
   -moz-transition: all .5s ease;
   -o-transition: all .5s ease;
@@ -1461,11 +1461,10 @@ span.color-red {
   padding: 0;
 }
 .portfolio-item ul li {
-  line-height: 28px;
+  line-height: 20px; font-size: 12px;
 }
 .portfolio-item .portfolio-project-name {
-  font-size: 1.3em;
-  text-transform: uppercase;
+  font-size: 14px;
 }
 .portfolio-item .read-more {
   text-align: center;
