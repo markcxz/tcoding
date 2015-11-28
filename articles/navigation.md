@@ -12,6 +12,8 @@
 [软件设计]()
 
   * [中国软件开发者大会](http://sdcc.csdn.net/)
+  * [infoQ架构师专刊](http://www.infoq.com/cn/architect/)
+
   - - - -
   * [全球架构师峰会](http://www.archsummit.com/)
 
@@ -25,7 +27,21 @@
 [码农逆袭](codingPeasant.md)
 
 
+[访客留言](guestbook.md)
+
+
 [gimmick:theme (inverse: false)](flatly)
 
 
+<script type="text/javascript">
+  var duoshuoQuery = {short_name:"tcoding"};  
+  (function() {
+    var ds = document.createElement('script');
+    ds.type = 'text/javascript';ds.async = true;
+    ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+    ds.charset = 'UTF-8';
+    (document.getElementsByTagName('head')[0] 
+     || document.getElementsByTagName('body')[0]).appendChild(ds);
+  })();
+</script>
 
