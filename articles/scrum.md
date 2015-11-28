@@ -16,4 +16,5 @@ Note: Scrum是一种迭代式增量软件开发过程，通常用于敏捷软件
 
 ---
 
-<div class="ds-thread" data-thread-key="scrum" data-title="Scrum文章列表" data-url="http://www.tcoding.net/articles/index.html#!scrum.md"></div>
+[gimmick:duoshuo ( threadkey: 'scrum', title: "Scrum文章列表") ](tcoding)
+

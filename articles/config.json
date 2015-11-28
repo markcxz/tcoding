@@ -4,5 +4,6 @@
     "additionalFooterText": "&copy; 2015 tcoding.net All rights reserved. &nbsp;&nbsp;",
     "anchorCharacter": "&#x2693;",
     "title": "T·Coding | 聚焦团队开发，专注码农节操",
-    "brandImg": "<img src='tcoding-logo.png' />"
+    "brandLogo": "<img src='tcoding-logo.png' />",
+    "brandLink": "http://baidu.com"
 }

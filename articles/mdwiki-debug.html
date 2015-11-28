@@ -21,6 +21,13 @@
         font-size: 0.7em;
         margin-left: 0.25em;
     }
+    #md-menu .navbar-brand img{
+    margin:-20px 0px;height: 45px;
+    }
+
+    #md-content .md-text{
+        text-indent: 2em; line-height:160%;
+    }
     /* for pageContentMenu */
     #md-page-menu {
             position: static;
@@ -1559,18 +1566,42 @@ if (typeof exports === 'object') {
         var md = '';
 
         $.md.stage('init').subscribe(function(done) {
+
             var ajaxReq = {
                 url: $.md.mainHref,
                 dataType: 'text'
             };
+
+            // Request the md page
             $.ajax(ajaxReq).done(function(data) {
-                // TODO do this elsewhere
                 md = data;
                 done();
-            }).fail(function() {
+            })
+
+            // Failed to find the md page we were looking for
+            .fail(function() {
+
+                // Warn that this page wasn't found
                 var log = $.md.getLogger();
-                log.fatal('Could not get ' + $.md.mainHref);
-                done();
+                log.warn('Could not get ' + $.md.mainHref);
+
+                // Attempt to gracefully recover by displaying a user defined 404 page
+                ajaxReq.url = '404.md';
+                $.ajax(ajaxReq).done(function(data) {
+                    md = data;
+                    done();
+                })
+
+                // The user has not defined a 404.md.
+                .fail(function(data) {
+                    log.fatal('Could not get a user defined 404.md');
+
+                    // Our last attempt to provide a good user expierence by proving a hard coded
+                    // 'page not found' text.
+                    md = "# Page Not Found" ;
+
+                    done();
+                });
             });
         });
 
@@ -2794,9 +2825,13 @@ if (typeof exports === 'object') {
         // the menu should be the first element in the body
         $('#md-menu').prependTo ('#md-all');
 
+        //add brand logo
         var brand_text = $('#md-menu h1').toptext();
+        var brand_href = $.md.config.brandLink || "#";
         $('#md-menu h1').remove();
-        $('a.navbar-brand').text(brand_text);
+        $('a.navbar-brand').html($.md.config.brandLogo || brand_text);
+        $('a.navbar-brand').attr("href",brand_href);
+        $('a.navbar-brand').attr("title",brand_text);
 
         // initial offset
         $('#md-body').css('margin-top', '70px');
@@ -3455,6 +3490,70 @@ if (typeof exports === 'object') {
 }(jQuery));
 
 (function($) {
+    var duoshuoGimmick = {
+        name: 'duoshuo',
+        version: $.md.version,
+        once: function() {
+            $.md.linkGimmick(this, 'duoshuo', duoshuo);
+        }
+    };
+    $.md.registerGimmick(duoshuoGimmick);
+
+    var alreadyDone = false;
+    var duoshuo = function($links, opt, text) {
+        //begin
+        var default_options = {
+            threadkey: '',
+            title: '',
+            url:window.location.href
+        };
+        var options = $.extend (default_options, opt);
+        var duoshuo_div = $('<div id="duoshuo_thread" class="ds-thread"></div>');
+        duoshuo_div.css ('margin-top', '2em');    
+
+        if (options.threadkey.length > 0) {
+            duoshuo_div.attr('data-thread-key', options.threadkey);
+        } else {
+            duoshuo_div.attr('data-thread-key', window.location.href);
+        }
+
+        duoshuo_div.attr('data-title', options.title);
+        duoshuo_div.attr('data-url', options.url);
+        
+
+        return $links.each(function(i,link) {
+            if (alreadyDone === true) {
+                return;
+            }
+            alreadyDone = true;
+
+            var $link = $(link);
+            var duoshuo_shortname = $link.attr('href');
+
+            if (duoshuo_shortname !== undefined && duoshuo_shortname.length > 0) {
+                // insert the div
+                $link.remove ();
+                
+                $('#md-content').append(duoshuo_div);
+                if ($('#duoshuo_thread').length > 0) {
+                    (function() {
+                        window.duoshuoQuery = {short_name: duoshuo_shortname };  
+                        var ds = document.createElement('script');
+                        ds.type = 'text/javascript';
+                        ds.async = true;
+                        ds.src = (document.location.protocol === 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+                        ds.charset = 'UTF-8';
+                        (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(ds);
+
+                    })();
+                }
+            }
+        });
+        //end
+    };
+}(jQuery));
+
+(function($) {
     var language = window.navigator.userLanguage || window.navigator.language;
     var code = language + "_" + language.toUpperCase();
     var fbRootDiv = $('<div id="fb-root" />');
@@ -3737,7 +3836,7 @@ if (typeof exports === 'object') {
             }
 
         } else if( content.indexOf( 'id="gist' ) !== -1 ) {
-            expression = /gist([\d]{1,})/g.exec(content);
+            expression = /https:\/\/gist.github.com\/.*\/(.*)#/.exec(content);
             id = expression[1];
 
             if( id !== undefined ) {
@@ -4197,6 +4296,144 @@ function googlemapsReady() {
             }
         });
     }
+}(jQuery));
+
+(function($) {
+    'use strict';
+
+    var scripturl = '//cdnjs.cloudflare.com/ajax/libs/Chart.js/1.0.2/Chart.min.js';
+
+    var chartGimmick = {
+        name: 'chart',
+        version: $.md.version,
+        once: function() {
+            $.md.linkGimmick(this, 'chart', chart);
+
+            // load the chart js
+            $.md.registerScript(this, scripturl, {
+                license: 'MIT',
+                loadstage: 'skel_ready',
+                finishstage: 'gimmick'
+            });
+        }
+    };
+    $.md.registerGimmick(chartGimmick);
+
+    var log = $.md.getLogger();
+
+    function chart($links, opt, text) {
+        return $links.each (function (i, link){
+
+            // Get the options for this gimmick
+            //      labelColumn: This is a string the indicates the column that will be used to
+            //                   label the data points
+            //      dataColumns: This is a array of strings that indicate each column to be plotted
+            //      canvasId:    This is a ID for the given chart. Defaults to a random number
+            //                   between 1-1000.
+            //      chartOptions: This is an object that is passed to chartjs to configure its
+            //                    options.
+            //      chartType:   This string is the type of chart we want to render. Bar, Line,
+            //                   or Radar. Defaults to Line.
+            var default_options = {
+                chartType: 'Line',
+                canvasId: 'chartGimmick' + Math.floor((Math.random() * 1000) + 1),
+                chartOptions: {
+                    responsive: false
+                }
+            };
+            var options = $.extend ({}, default_options, opt);
+
+            var $link = $(link);
+
+            var table = $link.parents().find("table").last();
+            if (table.length === 0) {
+                log.error('Chart Gimmick: No tables found on the page.');
+                $link.remove();
+                return;
+            }
+
+            // Replace the Gimmick with the canvas that chartJS needs
+            var myHtml = $('<canvas id="' + options.canvasId + '"></canvas>');
+            myHtml.width(options.width || '450px');
+            myHtml.height(options.height || '250px');
+            $link.replaceWith(myHtml);
+
+            // This is the object that is given to the chart frame work for rendering. It will be
+            // built up by processing the html table that is found on the table.
+            var chartConfig = {
+                "datasets": [],
+                "labels": []
+            };
+
+            var chartAvailableToRender = true;
+
+            // These variables hold the indices of the columns in the table we care about. They will
+            // be populated as we process the table based on the options that are given in the
+            // gimmick
+            var labelColumnIndex = -1;
+            var dataColumnIndices = [];
+
+            // Get the index of the columns that we care about for charting
+            table.find("th").each(function(index){
+
+                // This is the column that labels each data point
+                if(this.textContent === options.labelColumn) {
+                    labelColumnIndex = index;
+                }
+
+                // Check if this is a data column
+                else {
+                    for(var i = 0; i < options.dataColumns.length; i++) {
+                        if(this.textContent === options.dataColumns[i]) {
+                            dataColumnIndices.push(index);
+                        }
+                    }
+                }
+            });
+
+            // Get the data
+            table.find("tr").each(function(rowIndex){
+                $(this).find("td").each(function(colIndex){
+
+                    if(colIndex === labelColumnIndex) {
+                        chartConfig.labels.push(this.textContent);
+                    } else {
+                        for(var i = 0; i < dataColumnIndices.length; i++) {
+                            if(colIndex === dataColumnIndices[i]) {
+
+                                if(chartConfig.datasets[i] === undefined) {
+                                    chartConfig.datasets[i] = {};
+                                    chartConfig.datasets[i].data = [];
+                                }
+
+                                chartConfig.datasets[i].data.push(this.textContent);
+                            }
+                        }
+                    }
+                });
+            });
+
+            // No Chart data found
+            if (chartConfig.datasets[i] === undefined) {
+                chartAvailableToRender = false;
+                log.error('Chart Gimmick: No data was found for the chart. Make sure that there ' +
+                    'is a tables on the page. Check that your ' +
+                    'column headers match the chart configuration.');
+            }
+
+            if (chartAvailableToRender) {
+                var canvas = document.getElementById(options.canvasId);
+                var ctx = canvas.getContext('2d');
+                $.md.stage('postgimmick').subscribe(function(done) {
+                    setTimeout(function() {
+                        new Chart(ctx)[options.chartType](chartConfig, options.chartOptions);
+                    });
+                    done(); 
+                });
+            }
+        });
+    }
+
 }(jQuery));
 
 (function($) {

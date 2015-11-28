@@ -18,4 +18,4 @@
 
 ---
 
-<div class="ds-thread" data-thread-key="guestbook" data-title="文章中心" data-url="http://www.tcoding.net/articles/index.html#!index.md"></div>
+[gimmick:duoshuo ( threadkey: 'guestbook', title: "文章中心") ](tcoding)
